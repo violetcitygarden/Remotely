@@ -54,3 +54,12 @@ jobs:
 
       - name: Build desktop console
         run: dotnet build Console.Win/Console.Win.csproj --configuration Release
+
+      - name: Publish desktop console
+        run: dotnet publish Console.Win/Console.Win.csproj --configuration Release -p:PublishProfile=win-x64
+
+      - name: Upload desktop console
+        uses: actions/upload-artifact@v4
+        with:
+          name: Remotely-Console-win-x64
+          path: Console.Win/bin/publish/win-x64/
