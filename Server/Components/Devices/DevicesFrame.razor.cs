@@ -30,7 +30,7 @@ public partial class DevicesFrame : AuthComponentBase
     private int _currentPage = 1;
     private int _devicesPerPage = 25;
     private string? _filter;
-    private bool _hideOfflineDevices = true;
+    private bool _hideOfflineDevices;
     private string _lastFilterState = string.Empty;
     private string? _selectedGroupId;
     private string _selectedSortProperty = "DeviceName";
@@ -60,6 +60,10 @@ public partial class DevicesFrame : AuthComponentBase
     private IDataService DataService { get; init; } = null!;
 
     private Device[] DisplayedDevices => GetDisplayedDevices();
+
+    private int OfflineDeviceCount => _allDevices.Count(x => !x.IsOnline);
+
+    private int OnlineDeviceCount => _allDevices.Count(x => x.IsOnline);
 
     [Inject]
     private ILogger<DevicesFrame> Logger { get; init; } = null!;
@@ -165,7 +169,9 @@ public partial class DevicesFrame : AuthComponentBase
                     device.CurrentUser?.Contains(_filter, StringComparison.OrdinalIgnoreCase) != true &&
                     device.DeviceName?.Contains(_filter, StringComparison.OrdinalIgnoreCase) != true &&
                     device.Notes?.Contains(_filter, StringComparison.OrdinalIgnoreCase) != true &&
+                    device.OSDescription?.Contains(_filter, StringComparison.OrdinalIgnoreCase) != true &&
                     device.Platform?.Contains(_filter, StringComparison.OrdinalIgnoreCase) != true &&
+                    device.PublicIP?.Contains(_filter, StringComparison.OrdinalIgnoreCase) != true &&
                     device.Tags?.Contains(_filter, StringComparison.OrdinalIgnoreCase) != true)
             {
                 continue;

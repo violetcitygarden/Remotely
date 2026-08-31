@@ -1,0 +1,34 @@
+REMOTELY SERVER - TESTE LOCAL
+=============================
+
+1. Extraia todo o ZIP para uma pasta normal, como C:\Remotely-Server.
+
+2. Execute iniciar-servidor-local.cmd.
+
+3. Se o Firewall do Windows perguntar, permita o acesso somente em redes
+   privadas.
+
+4. Abra http://localhost:5000 no navegador. Na primeira execução, crie a
+   conta administrativa usando a opção Register.
+
+5. No Remotely Console, abra Arquivo > Configurar servidor e informe:
+
+       http://localhost:5000
+
+6. Para conectar outro PC da mesma rede, descubra o IPv4 do computador
+   principal com o comando ipconfig. No outro PC, abra:
+
+       http://IP-DO-PC-PRINCIPAL:5000
+
+   Entre no painel, abra Downloads/Deploy e instale o agente Windows x64.
+
+Os dados de teste e o banco SQLite ficam nesta própria pasta. Faça backup do
+arquivo Remotely.db se quiser preservar as configurações.
+
+ATENCAO
+-------
+Este script usa HTTP para facilitar o primeiro teste dentro da rede local.
+Ele tambem inicia o ASP.NET em modo Development para impedir o redirecionamento
+automatico para uma porta HTTPS que ainda nao foi configurada.
+Nao encaminhe a porta 5000 no roteador e nao exponha este pacote diretamente
+na internet. O acesso externo sera configurado depois com TLS e rede privada.

@@ -1,98 +1,125 @@
 ﻿@attribute [Authorize]
 @inherits AuthComponentBase
 
-<h3>Devices</h3>
-
-<div @onclick="ClearSelectedCard">
-    <div id="deviceControlsWrapper">
+<section class="device-console" @onclick="ClearSelectedCard">
+    <div class="console-titlebar">
         <div>
-            <div>
-                <div>Device Group</div>
-                <div class="text-nowrap">
-                    <select class="form-control d-inline" style="width: 150px" @bind="_selectedGroupId">
-                        <option value="@_deviceGroupAll">All</option>
-                        <option value="@_deviceGroupNone">None</option>
-                        @foreach (var group in _deviceGroups)
-                        {
-                            <option @key="group.ID" value="@group.ID">@group.Name</option>
-                        }
-                    </select>
-                    <button class="btn btn-sm btn-secondary" title="Wake Devices in Group" style="width: 40px; margin-left: 5px;" @onclick="WakeDevices">
-                        <span class="oi oi-power-standby"></span>
-                    </button>
-
-                </div>
-            </div>
-
-            <div>
-                <div class="mt-1">Sort</div>
-                <select class="form-control d-inline" style="width: 150px" @bind="_selectedSortProperty">
-                    <option value=""></option>
-                    @foreach (var prop in _sortableProperties)
-                    {
-                        <option value="@prop.Name">@GetDisplayName(prop)</option>
-                    }
-                </select>
-                <button class="btn btn-sm btn-secondary" title="Sort Direction" style="width: 40px; margin-left: 5px;" @onclick="ToggleSortDirection">
-                    <span class="oi @GetSortIcon()"></span>
-                </button>
-            </div>
-
-            <div class="custom-control custom-checkbox mt-2">
-                <input id="hideOfflineDevicesCheckbox" type="checkbox" class="custom-control-input align-middle" @bind="_hideOfflineDevices" />
-                <label class="custom-control-label align-middle" for="hideOfflineDevicesCheckbox">Hide offline devices</label>
-            </div>
-            <div class="mt-2">
-                <button class="btn btn-sm btn-secondary me-2" @onclick="SelectAllCards">Select All</button>
-                <button class="btn btn-sm btn-primary" @onclick="HandleRefreshClicked">Refresh</button>
-            </div>
+            <h3>Computadores</h3>
+            <span>Gerenciamento e acesso remoto</span>
         </div>
-         
-        <div>
-            <div class="d-inline-block text-start">
-                <div>
-                    <div>Search</div>
-                    <input class="form-control d-inline"
-                           style="width: 200px"
-                           placeholder="Search device properties"
-                           @bind="_filter" />
-                </div>
-
-                <div class="mt-2" style="white-space: nowrap">
-                    <button class="btn btn-sm btn-secondary" @onclick="PageDown">
-                        <i class="oi oi-chevron-left"></i>
-                    </button>
-                    <span class="small">Page</span>
-                    <input id="currentPageInput" style="width:75px; text-align: center" pattern="[0-9]" @bind="_currentPage" @bind:event="oninput" />
-                    <span class="small">of</span>
-                    <span>@TotalPages</span>
-                    <button class="btn btn-sm btn-secondary" @onclick="PageUp">
-                        <i class="oi oi-chevron-right"></i>
-                    </button>
-                </div>
-
-                <div class="mt-2">
-                    <select class="form-control d-inline" style="width:100px" @bind="_devicesPerPage">
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                        <option value="200">200</option>
-                    </select>
-                    <span class="ms-1 small">per page</span>
-                </div>
-            </div>
-           
-
+        <div class="connection-summary">
+            <span class="status-led online"></span>
+            @OnlineDeviceCount online
+            <span class="summary-separator">|</span>
+            @OfflineDeviceCount offline
         </div>
     </div>
-    <div id="deviceListDiv" class="p-2 mb-5">
-        @foreach (var device in DisplayedDevices)
-        {
-            <CascadingValue Value="this">
-                <DeviceCard @key="device.ID" Device="device" />
-            </CascadingValue>
-        }
+
+    <div id="deviceControlsWrapper" class="console-toolbar">
+        <div class="toolbar-group">
+            <label for="deviceGroupSelect">Grupo</label>
+            <select id="deviceGroupSelect" class="form-select form-select-sm" @bind="_selectedGroupId">
+                <option value="@_deviceGroupAll">Todos</option>
+                <option value="@_deviceGroupNone">Sem grupo</option>
+                @foreach (var group in _deviceGroups)
+                {
+                    <option @key="group.ID" value="@group.ID">@group.Name</option>
+                }
+            </select>
+            <button class="classic-button" title="Ligar computadores offline deste grupo" @onclick="WakeDevices">
+                <span class="oi oi-power-standby"></span>
+                Ligar
+            </button>
+        </div>
+
+        <div class="toolbar-group toolbar-search">
+            <label for="deviceSearchInput">Localizar</label>
+            <input id="deviceSearchInput"
+                   class="form-control form-control-sm"
+                   placeholder="Nome, usuário, IP, etiqueta..."
+                   @bind="_filter"
+                   @bind:event="oninput" />
+        </div>
+
+        <div class="toolbar-group">
+            <label for="deviceSortSelect">Ordenar por</label>
+            <select id="deviceSortSelect" class="form-select form-select-sm" @bind="_selectedSortProperty">
+                <option value=""></option>
+                @foreach (var prop in _sortableProperties)
+                {
+                    <option value="@prop.Name">@GetDisplayName(prop)</option>
+                }
+            </select>
+            <button class="classic-button icon-only" title="Inverter ordem" @onclick="ToggleSortDirection">
+                <span class="oi @GetSortIcon()"></span>
+            </button>
+        </div>
+
+        <div class="toolbar-actions">
+            <label class="offline-toggle" for="hideOfflineDevicesCheckbox">
+                <input id="hideOfflineDevicesCheckbox" type="checkbox" @bind="_hideOfflineDevices" />
+                Ocultar offline
+            </label>
+            <button class="classic-button" @onclick="SelectAllCards">
+                <span class="oi oi-check"></span>
+                Selecionar
+            </button>
+            <button class="classic-button primary" @onclick="HandleRefreshClicked">
+                <span class="oi oi-reload"></span>
+                Atualizar
+            </button>
+        </div>
+    </div>
+
+    <div id="deviceListDiv" @onclick:stopPropagation>
+        <div class="device-list-header" aria-hidden="true">
+            <span></span>
+            <span>Computador</span>
+            <span>Usuário</span>
+            <span>Sistema</span>
+            <span>Último contato</span>
+            <span>CPU</span>
+            <span>RAM</span>
+            <span>Disco</span>
+            <span>Ações</span>
+        </div>
+
+        <div class="device-list-body">
+            @if (DisplayedDevices.Length == 0)
+            {
+                <div class="empty-list">Nenhum computador corresponde aos filtros atuais.</div>
+            }
+            else
+            {
+                @foreach (var device in DisplayedDevices)
+                {
+                    <CascadingValue Value="this">
+                        <DeviceCard @key="device.ID" Device="device" />
+                    </CascadingValue>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="console-statusbar">
+        <span>@_filteredDevices.Count computador(es)</span>
+        <span>Página @_currentPage de @TotalPages</span>
+        <div class="pager">
+            <button class="classic-button icon-only" title="Página anterior" @onclick="PageDown">
+                <i class="oi oi-chevron-left"></i>
+            </button>
+            <input id="currentPageInput" pattern="[0-9]" @bind="_currentPage" @bind:event="oninput" />
+            <button class="classic-button icon-only" title="Próxima página" @onclick="PageUp">
+                <i class="oi oi-chevron-right"></i>
+            </button>
+            <select class="form-select form-select-sm" title="Computadores por página" @bind="_devicesPerPage">
+                <option value="25">25 por página</option>
+                <option value="50">50 por página</option>
+                <option value="100">100 por página</option>
+                <option value="200">200 por página</option>
+            </select>
+        </div>
     </div>
 
     <Terminal />
-</div>
+</section>
