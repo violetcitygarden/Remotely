@@ -63,3 +63,44 @@ jobs:
         with:
           name: Remotely-Console-win-x64
           path: Console.Win/bin/publish/win-x64/
+
+  server-windows-package:
+    name: Windows server package
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Publish Windows agent
+        run: dotnet publish Agent/Agent.csproj --configuration Release --runtime win-x64 --self-contained true --output Agent/bin/publish/win-x64
+
+      - name: Publish remote-control host
+        run: dotnet publish Desktop.Win/Desktop.Win.csproj --configuration Release -p:PublishProfile=packaged-win-x64
+
+      - name: Package Windows agent
+        shell: pwsh
+        run: Compress-Archive -Path "Agent/bin/publish/win-x64/*" -DestinationPath "Server/wwwroot/Content/Remotely-Win-x64.zip" -Force
+
+      - name: Publish attended desktop client
+        run: dotnet publish Desktop.Win/Desktop.Win.csproj --configuration Release -p:PublishProfile=desktop-win-x64
+
+      - name: Publish Windows server
+        shell: pwsh
+        run: |
+          dotnet publish Server/Server.csproj --configuration Release --runtime win-x64 --self-contained true --output artifacts/server-win-x64
+          Copy-Item -Path "Server/TestPackage/*" -Destination "artifacts/server-win-x64/" -Force
+
+      - name: Upload Windows server
+        uses: actions/upload-artifact@v4
+        with:
+          name: Remotely-Server-win-x64
+          path: artifacts/server-win-x64/
