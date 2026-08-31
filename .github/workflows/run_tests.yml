@@ -35,3 +35,22 @@ jobs:
 
       - name: Test server
         run: dotnet test Tests/Server.Tests/Server.Tests.csproj --configuration Release
+
+  console-windows:
+    name: Windows console
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build desktop console
+        run: dotnet build Console.Win/Console.Win.csproj --configuration Release
