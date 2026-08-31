@@ -27,6 +27,12 @@ internal sealed class BrowserWindow : Form
             Icon = appIcon;
         }
 
+        _webView = new WebView2
+        {
+            AllowExternalDrop = true,
+            Dock = DockStyle.Fill
+        };
+
         var toolStrip = new ToolStrip
         {
             GripStyle = ToolStripGripStyle.Hidden,
@@ -60,12 +66,6 @@ internal sealed class BrowserWindow : Form
             TextAlign = ContentAlignment.MiddleLeft
         };
         statusStrip.Items.Add(_statusLabel);
-
-        _webView = new WebView2
-        {
-            AllowExternalDrop = true,
-            Dock = DockStyle.Fill
-        };
 
         Controls.Add(_webView);
         Controls.Add(toolStrip);
