@@ -181,6 +181,38 @@ public partial class DeviceCard : AuthComponentBase
         return $"{_state}".ToLower();
     }
 
+    private static string GetCellValue(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? "—" : value;
+    }
+
+    private string GetDeviceGroupName()
+    {
+        if (string.IsNullOrWhiteSpace(Device.DeviceGroupID))
+        {
+            return "Sem grupo";
+        }
+
+        return _deviceGroups.FirstOrDefault(x => x.ID == Device.DeviceGroupID)?.Name ?? "—";
+    }
+
+    private string GetLastSeenText()
+    {
+        if (Device.IsOnline)
+        {
+            return "Agora";
+        }
+
+        return Device.LastOnline == default
+            ? "Nunca"
+            : Device.LastOnline.ToString("dd/MM/yyyy HH:mm");
+    }
+
+    private string GetOperatingSystem()
+    {
+        return GetCellValue(Device.OSDescription ?? Device.Platform);
+    }
+
     private string GetProgressMessage(string key)
     {
         if (_fileUploadProgressLookup.TryGetValue(key, out var value))
@@ -197,6 +229,23 @@ public partial class DeviceCard : AuthComponentBase
         {
             _state = DeviceCardState.Normal;
         }
+    }
+
+    private async Task ToggleDetails()
+    {
+        if (IsExpanded)
+        {
+            _state = DeviceCardState.Normal;
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+
+        await Messenger.Send(
+            new DeviceCardStateChangedMessage(Device.ID, DeviceCardState.Expanded),
+            CircuitConnection.ConnectionId);
+
+        JsInterop.ScrollToElement(_card);
+        await CircuitConnection.TriggerHeartbeat(Device.ID);
     }
     private async Task HandleValidSubmit()
     {

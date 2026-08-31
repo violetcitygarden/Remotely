@@ -1,18 +1,227 @@
-﻿#deviceControlsWrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-column-gap: 20px;
-    grid-row-gap: 10px;
-    margin-bottom: 5px;
-    margin-right: 5px;
-    padding-top: 3px;
+﻿.device-console {
+    --console-border: #9a9a9a;
+    --console-face: #ece9d8;
+    --console-highlight: #ffffff;
+    border: 1px solid var(--console-border);
+    background: #f7f7f7;
+    color: #202020;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    font-size: 13px;
+    min-width: 760px;
 }
 
-    #deviceControlsWrapper > :last-child {
-        text-align: right;
+.console-titlebar {
+    align-items: center;
+    background: linear-gradient(#f8f8f8, #dedede);
+    border-bottom: 1px solid var(--console-border);
+    display: flex;
+    justify-content: space-between;
+    min-height: 48px;
+    padding: 6px 10px;
+}
+
+.console-titlebar h3 {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.15;
+    margin: 0;
+}
+
+.console-titlebar > div > span {
+    color: #5a5a5a;
+    font-size: 11px;
+}
+
+.connection-summary {
+    align-items: center;
+    display: flex;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.status-led {
+    border: 1px solid #2f5f22;
+    border-radius: 50%;
+    display: inline-block;
+    height: 9px;
+    width: 9px;
+}
+
+.status-led.online {
+    background: #58ad39;
+    box-shadow: inset 0 0 0 1px #8ddd70;
+}
+
+.summary-separator {
+    color: #999;
+    margin: 0 2px;
+}
+
+.console-toolbar {
+    align-items: end;
+    background: var(--console-face);
+    border-bottom: 1px solid var(--console-border);
+    box-shadow: inset 0 1px var(--console-highlight);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    padding: 7px 8px;
+}
+
+.toolbar-group {
+    align-items: end;
+    display: grid;
+    gap: 4px;
+    grid-auto-flow: column;
+    grid-template-rows: auto 26px;
+}
+
+.toolbar-group label {
+    color: #4a4a4a;
+    font-size: 11px;
+    grid-column: 1 / -1;
+}
+
+.toolbar-group select {
+    min-width: 145px;
+}
+
+.toolbar-search {
+    flex: 1 1 220px;
+}
+
+.toolbar-search input {
+    min-width: 220px;
+    width: 100%;
+}
+
+.toolbar-actions {
+    align-items: center;
+    display: flex;
+    gap: 5px;
+    margin-left: auto;
+    min-height: 26px;
+}
+
+.offline-toggle {
+    align-items: center;
+    display: flex;
+    gap: 5px;
+    margin: 0 7px 0 0;
+    white-space: nowrap;
+}
+
+.classic-button {
+    align-items: center;
+    background: linear-gradient(#ffffff, #dcdcdc);
+    border: 1px solid #888;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 1px #f5f5f5;
+    color: #202020;
+    display: inline-flex;
+    font-size: 12px;
+    gap: 5px;
+    height: 26px;
+    justify-content: center;
+    padding: 0 9px;
+    white-space: nowrap;
+}
+
+.classic-button:hover {
+    background: linear-gradient(#fff, #cfe8fb);
+    border-color: #397aa7;
+}
+
+.classic-button:active {
+    background: #c5dff1;
+    box-shadow: inset 1px 1px 2px #999;
+}
+
+.classic-button.primary {
+    border-color: #397aa7;
+}
+
+.classic-button.icon-only {
+    padding: 0;
+    width: 28px;
+}
+
+#deviceListDiv {
+    background: #fff;
+    overflow: auto;
+}
+
+.device-list-header {
+    background: linear-gradient(#f7f7f7, #d8d8d8);
+    border-bottom: 1px solid #8b8b8b;
+    display: grid;
+    font-weight: 600;
+    grid-template-columns: 28px minmax(170px, 2fr) minmax(120px, 1.2fr) minmax(135px, 1.3fr) minmax(105px, 1fr) 62px 62px 62px 188px;
+    min-width: 1030px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.device-list-header span {
+    border-right: 1px solid #b8b8b8;
+    padding: 5px 7px;
+}
+
+.device-list-body {
+    min-height: 220px;
+    min-width: 1030px;
+}
+
+.empty-list {
+    color: #666;
+    padding: 40px 12px;
+    text-align: center;
+}
+
+.console-statusbar {
+    align-items: center;
+    background: var(--console-face);
+    border-top: 1px solid var(--console-border);
+    box-shadow: inset 0 1px var(--console-highlight);
+    display: flex;
+    gap: 18px;
+    min-height: 31px;
+    padding: 3px 6px;
+}
+
+.console-statusbar > span {
+    border-right: 1px solid #aaa;
+    min-width: 130px;
+    padding-right: 12px;
+}
+
+.pager {
+    align-items: center;
+    display: flex;
+    gap: 3px;
+    margin-left: auto;
+}
+
+.pager input {
+    border: 1px solid #888;
+    height: 24px;
+    text-align: center;
+    width: 44px;
+}
+
+.pager select {
+    height: 26px;
+    margin-left: 5px;
+    width: 132px;
+}
+
+@media (max-width: 900px) {
+    .device-console {
+        min-width: 0;
     }
 
-#deviceListDiv{
-    overflow-y: auto;
-    overflow-x: hidden;
+    .toolbar-actions {
+        margin-left: 0;
+    }
 }
